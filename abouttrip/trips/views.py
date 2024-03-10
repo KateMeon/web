@@ -5,6 +5,15 @@ from django.template.loader import render_to_string
 from django.shortcuts import render
 
 menu = ["О сайте", "Добавить статью", "Обратная связь", "Войти"]
+data_db = [
+    {'id': 1, 'title': 'Россия', 'content':
+        'Информация о путешествиях по России', 'is_published': True},
+    {'id': 2, 'title': 'Египет', 'content':
+        'Информация о путешествиях по Египту', 'is_published': False},
+    {'id': 3, 'title': 'Турция', 'content':
+        'Информация о путешествиях по Турции', 'is_published': True},
+
+]
 
 
 class MyClass:
@@ -17,13 +26,13 @@ class MyClass:
 def index(request):
     data = {'title': 'Главная страница',
             'menu': menu,
-            'float': 28.56,
-            'lst': [1, 2, 'abc', True],
-            'set': {1, 1, 2, 3, 2, 5},
-            'dict': {'key_1': 'value_1', 'key_2': 'value_2'},
-            'obj': MyClass(10, 20),
+            'posts': data_db,
             }
     return render(request, 'abouttrip/index.html', context=data)
+
+
+def show_post(request, post_id):
+    return HttpResponse(f"Отображение статьи с id ={post_id}")
 
 
 def about(request):
