@@ -21,13 +21,12 @@ from abouttrip import converters
 
 register_converter(converters.FourDigitYearConverter, "year4")
 handler404 = views.page_not_found
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', views.index, name='home'),
-    path('about/', views.about),
-    path('trips/', include('trips.urls'), name='trips'),
-    path('countries/<int:country_id>/', views.countries, name='countries'),
-    path('countries/<slug:country_slug>/', views.countries_by_slug, name='countries_id'),
-    path('archive/<year4:year>/', views.archive, name='archive'),
+    path('about/', views.about, name='about'),
+    path('addpage/', views.addpage, name='add_page'),
+    path('contact/', views.contact, name='contact'),
+    path('login/', views.login, name='login'),
     path('post/<int:post_id>/', views.show_post, name='post'),
 ]

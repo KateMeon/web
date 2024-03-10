@@ -4,7 +4,13 @@ from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.shortcuts import render
 
-menu = ["О сайте", "Добавить статью", "Обратная связь", "Войти"]
+menu = [{'title': "О сайте", 'url_name': 'about'},
+        {'title': "Добавить статью", 'url_name':
+            'add_page'},
+        {'title': "Обратная связь", 'url_name':
+            'contact'},
+        {'title': "Войти", 'url_name': 'login'}]
+
 data_db = [
     {'id': 1, 'title': 'Россия', 'content':
         'Информация о путешествиях по России', 'is_published': True},
@@ -12,7 +18,6 @@ data_db = [
         'Информация о путешествиях по Египту', 'is_published': False},
     {'id': 3, 'title': 'Турция', 'content':
         'Информация о путешествиях по Турции', 'is_published': True},
-
 ]
 
 
@@ -39,24 +44,16 @@ def about(request):
     return render(request, 'abouttrip/about.html', {'title': 'О сайте', 'menu': menu})
 
 
-def countries(request, country_id):
-    return HttpResponse(f"<h1>Статьи по странам</h1><p>id:{country_id}</p>")
+def addpage(request):
+    return HttpResponse("Добавление статьи")
 
 
-def countries_by_slug(request, country_slug):
-    if request.GET:
-        print(request.GET)
-    if request.POST:
-        print(request.POST)
-    return HttpResponse(f"<h1>Статьи по странам</h1><p>Страна:{country_slug}</p>")
+def contact(request):
+    return HttpResponse("Обратная связь")
 
 
-def archive(request, year):
-    if year > 2024:
-        return redirect('home', permanent=True)
-    # raise Http404()
-
-    return HttpResponse(f"<h1>Архив по годам</h1><p>{year}</p>")
+def login(request):
+    return HttpResponse("Авторизация")
 
 
 def page_not_found(request, exception):
