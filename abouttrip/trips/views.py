@@ -50,6 +50,7 @@ def index(request):
     data = {'title': 'Главная страница',
             'menu': menu,
             'posts': data_db,
+            'cat_selected': 0,
             }
     return render(request, 'abouttrip/index.html', context=data)
 
@@ -76,3 +77,14 @@ def login(request):
 
 def page_not_found(request, exception):
     return HttpResponse('<h1>Страница не найдена</h1>')
+
+
+def show_category(request, cat_id):
+    data = {
+        'title': 'Отображение по рубрикам',
+        'menu': menu,
+        'posts': data_db,
+        'cat_selected': cat_id,
+    }
+    return render(request, 'abouttrip/index.html',
+                  context=data)
