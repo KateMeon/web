@@ -8,7 +8,7 @@
     {% if p.is_published %}
     <li>
         <h2>{{ p.title }}</h2>
-        <p>{{ p.content }}</p>
+        <p>{{ p.content | truncatewords:50}}</p>
         <p><a href="{% url 'post' p.id %}">Читать пост</a></p>
         {% if not forloop.last %}
         <hr>

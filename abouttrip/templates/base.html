@@ -1,16 +1,23 @@
 <!DOCTYPE html>
+{% load static %}
+{% load trips_tags %}
 <head>
     <meta charset="UTF-8">
     <title>{{title|capfirst}}</title>
+    <link rel="icon" href="{% static 'abouttrip/images/favicon.ico' %}" />
+
+    <link type="text/css" href="{% static 'abouttrip/css/styles.css' %}" rel="stylesheet"/>
+
 </head>
 <body>
 <ul>
+    {% get_categories as categories%}
+
     <li><a href="{% url 'home' %}">Главная</a></li>
     {% for m in menu %}
     {% if not forloop.last %}
     <li>{% else %}
-    <li
-            class="last">{% endif %}
+    <li class="last">{% endif %}
         <a href="{% url m.url_name %}">{{m.title}}</a>
     </li>
     {% endfor %}
