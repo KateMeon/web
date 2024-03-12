@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1>{{title}}</h1>
-
 <ul class="list-articles">
     {% for p in posts %}
     {% if p.is_published %}
@@ -14,10 +13,8 @@
         {% if not forloop.last %}
         <hr>
         {% endif %}
-
     </li>
     {% endif %}
     {% endfor %}
 </ul>
-
 {% endblock %}

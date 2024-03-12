@@ -55,12 +55,13 @@ def index(request):
     return render(request, 'abouttrip/index.html', context=data)
 
 
+def about(request):
+    return render(request, 'abouttrip/about.html',
+                  {'title': 'О сайте', 'menu': menu})
+
+
 def show_post(request, post_id):
     return HttpResponse(f"Отображение статьи с id ={post_id}")
-
-
-def about(request):
-    return render(request, 'abouttrip/about.html', {'title': 'О сайте', 'menu': menu})
 
 
 def addpage(request):
