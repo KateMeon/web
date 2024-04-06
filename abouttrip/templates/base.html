@@ -25,24 +25,25 @@
 </div>
 
 <div class="left-chapters">
-    <ul class="leftchapters">
-        {% if cat_selected == 0 or cat_selected is None %}
-        <li class="selected">Все
-            категории
-        </li>
-        {% else %}
-        <li><a href="{% url 'home' %}">Все
-            категории</a></li>
-        {% endif %}
+    <td valign="top" class="left-chapters">
+        <ul class="leftchapters">
+            {% if cat_selected == 0 or cat_selected is None %}
+            <li class="selected">Все категории</li>
+            {% else %}
+            <li><a href="{% url 'home' %}">Все
+                категории</a></li>
+            {% endif %}
 
-        {% show_categories cat_selected %}
+            {% show_categories cat_selected %}
 
-        <li class="share">
-            <p>Наш канал</p>
-            <a class="share-yt" href="..."
-               target="_blank" rel="nofollow"></a>
-        </li>
-    </ul>
+            <li class="share">
+                <p>Наш канал</p>
+                <a class="share-yt" href="..."
+                   target="_blank" rel="nofollow"></a>
+            </li>
+            <li>{% show_all_tags %}</li>
+        </ul>
+    </td>
 </div>
 <div class="content">
     {% block content %} {% endblock %}
