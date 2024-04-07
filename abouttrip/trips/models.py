@@ -26,13 +26,14 @@ class Trips(models.Model):
     cat = models.ForeignKey('Category', on_delete=models.CASCADE, related_name='posts')
     tags = models.ManyToManyField('TagPost', blank=True, related_name='tags')
 
+    # author = models.OneToOneField('Author', on_delete=models.SET_NULL, null=True, blank=True,
+    #                               related_name='author')
 
-def get_absolute_url(self):
-    return reverse('post', kwargs={'post_slug': self.slug})
+    def get_absolute_url(self):
+        return reverse('post', kwargs={'post_slug': self.slug})
 
-
-def __str__(self):
-    return self.title
+    def __str__(self):
+        return self.title
 
 
 class Meta:
@@ -62,3 +63,10 @@ class TagPost(models.Model):
 
     def __str__(self):
         return self.tag
+
+# class Author(models.Model):
+#     name = models.CharField(max_length=100)
+#     age = models.IntegerField(null=True)
+#
+#     def __str__(self):
+#         return self.name
