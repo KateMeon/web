@@ -26,8 +26,8 @@ class Trips(models.Model):
     cat = models.ForeignKey('Category', on_delete=models.CASCADE, related_name='posts')
     tags = models.ManyToManyField('TagPost', blank=True, related_name='tags')
 
-    # author = models.OneToOneField('Author', on_delete=models.SET_NULL, null=True, blank=True,
-    #                               related_name='author')
+    voucher = models.OneToOneField('Voucher', on_delete=models.SET_NULL, null=True, blank=True,
+                                   related_name='trip')
 
     def get_absolute_url(self):
         return reverse('post', kwargs={'post_slug': self.slug})
@@ -64,9 +64,10 @@ class TagPost(models.Model):
     def __str__(self):
         return self.tag
 
-# class Author(models.Model):
-#     name = models.CharField(max_length=100)
-#     age = models.IntegerField(null=True)
-#
-#     def __str__(self):
-#         return self.name
+
+class Voucher(models.Model):
+    name = models.CharField(max_length=100)
+    days = models.IntegerField(null=True)
+
+    def __str__(self):
+        return self.name
