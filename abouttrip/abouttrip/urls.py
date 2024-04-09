@@ -22,8 +22,12 @@ from abouttrip import converters
 register_converter(converters.FourDigitYearConverter, "year4")
 handler404 = views.page_not_found
 
+admin.site.site_header = "Панель администрирования"
+admin.site.index_title = "Путешествия по миру"
+
 urlpatterns = [
     path('', views.index, name='home'),
+    path('admin/', admin.site.urls),
     path('about/', views.about, name='about'),
     path('addpage/', views.addpage, name='add_page'),
     path('contact/', views.contact, name='contact'),
