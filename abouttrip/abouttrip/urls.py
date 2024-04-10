@@ -16,8 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, register_converter, re_path
+from django.conf.urls.static import static
 from trips import views
-from abouttrip import converters
+from abouttrip import converters, settings
 
 register_converter(converters.FourDigitYearConverter, "year4")
 handler404 = views.page_not_found
@@ -36,4 +37,14 @@ urlpatterns = [
     path('category/<int:cat_id>/', views.show_category, name='category'),
     path('category/<slug:cat_slug>/', views.show_category, name='category'),
     path('tag/<slug:tag_slug>/', views.show_tag_postlist, name='tag'),
+    path("__debug__/", include("debug_toolbar.urls")),
 ]
+
+if settings.DEBUG:
+    import debug_toolbar
+
+    urlpatterns = [
+                      path('__debug__/', include(debug_toolbar.urls)),
+                  ] + urlpatterns
+
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
