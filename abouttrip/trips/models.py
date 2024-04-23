@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
+from django.core.validators import MinLengthValidator, MaxLengthValidator
 
 
 # Create your models here.
@@ -23,7 +24,8 @@ class Trips(models.Model):
         PUBLISHED = 1, 'Опубликовано'
 
     title = models.CharField(max_length=255, verbose_name="Заголовок")
-    slug = models.SlugField(max_length=255, db_index=True, unique=True)
+    slug = models.SlugField(max_length=255, db_index=True, unique=True,
+                            validators=[MinLengthValidator(3), MaxLengthValidator(100), ])
     content = models.TextField(blank=True, verbose_name="Текст статьи")
     time_create = models.DateTimeField(auto_now_add=True, verbose_name="Время создания")
     time_update = models.DateTimeField(auto_now=True, verbose_name="Время изменения")

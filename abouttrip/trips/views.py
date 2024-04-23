@@ -4,6 +4,7 @@ from django.shortcuts import redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.shortcuts import render
 from trips.models import Trips, Category, TagPost
+from trips.forms import AddPostForm
 
 menu = [{'title': "О сайте", 'url_name': 'about'},
         {'title': "Добавить статью", 'url_name':
@@ -54,7 +55,19 @@ def show_post(request, post_slug):
 
 
 def addpage(request):
-    return HttpResponse("Добавление статьи")
+    if request.method == "POST":
+        form = AddPostForm(request.POST)
+        if form.is_valid():
+            # print(form.cleaned_data)
+            try:
+                Trips.objects.create(**form.cleaned_data)
+                return redirect('home')
+            except:
+                form.add_error(None, 'Ошибка добавления поста')
+    else:
+        form = AddPostForm()
+    return render(request, 'abouttrip/addpage.html',
+                  {'menu': menu, 'title': 'Добавление статьи', 'form': form})
 
 
 def contact(request):
