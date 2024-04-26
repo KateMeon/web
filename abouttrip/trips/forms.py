@@ -1,6 +1,22 @@
 from django import forms
-from .models import Category, Voucher
+from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MaxLengthValidator
+from django.utils.deconstruct import deconstructible
+
+from .models import Category, Voucher
+
+
+# @deconstructible
+# class RussianValidator:
+#     ALLOWED_CHARS = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯабвгдеёжзийклмнопрстуфхцчшщбыъэюя0123456789 - "
+#     code = 'russian'
+#
+#     def __init__(self, message=None):
+#         self.message = message if message else "Должны присутствовать только русские символы, дефис и пробел."
+#
+#     def __call__(self, value):
+#         if not (set(value) <= set(self.ALLOWED_CHARS)):
+#             raise ValidationError(self.message, code=self.code, params={"value": value})
 
 
 class AddPostForm(forms.Form):
@@ -18,3 +34,10 @@ class AddPostForm(forms.Form):
                                  empty_label="Категория не выбрана")
     voucher = forms.ModelChoiceField(queryset=Voucher.objects.all(), required=False, label="Ваучер",
                                      empty_label="Нет ваучера")
+
+    def clean_title(self):
+        title = self.cleaned_data['title']
+        ALLOWED_CHARS = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯабвгдеёжзийклмнопрстуфхцчшщбыъэюя0123456789 - "
+        if not (set(title) <= set(ALLOWED_CHARS)):
+            raise ValidationError("Должны быть только русские символы, дефис и пробел.")
+        return title
