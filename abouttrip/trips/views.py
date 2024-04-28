@@ -3,8 +3,9 @@ from django.http import HttpResponse, Http404, HttpResponseNotFound
 from django.shortcuts import redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.shortcuts import render
-from trips.models import Trips, Category, TagPost
-from trips.forms import AddPostForm
+from trips.models import Trips, Category, TagPost, UploadFiles
+from trips.forms import AddPostForm, UploadFileForm
+import uuid
 
 menu = [{'title': "О сайте", 'url_name': 'about'},
         {'title': "Добавить статью", 'url_name':
@@ -37,9 +38,28 @@ def index(request):
     return render(request, 'abouttrip/index.html', context=data)
 
 
+# def handle_uploaded_file(f):
+#     name = f.name
+#     ext = ''
+#     if '.' in name:
+#         ext = name[name.rindex('.'):]
+#         name = name[:name.rindex('.')]
+#     suffix = str(uuid.uuid4())
+#     with open(f"uploads/{name}_{suffix}{ext}", "wb+") as destination:
+#         for chunk in f.chunks():
+#             destination.write(chunk)
+
+
 def about(request):
+    if request.method == "POST":
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            fp = UploadFiles(file=form.cleaned_data['file'])
+            fp.save()
+    else:
+        form = UploadFileForm()
     return render(request, 'abouttrip/about.html',
-                  {'title': 'О сайте', 'menu': menu})
+                  {'title': 'О сайте', 'menu': menu, 'form': form})
 
 
 def show_post(request, post_slug):
@@ -59,11 +79,9 @@ def addpage(request):
         form = AddPostForm(request.POST)
         if form.is_valid():
             # print(form.cleaned_data)
-            try:
-                Trips.objects.create(**form.cleaned_data)
-                return redirect('home')
-            except:
-                form.add_error(None, 'Ошибка добавления поста')
+            # Trips.objects.create(**form.cleaned_data)
+            form.save()
+            return redirect('home')
     else:
         form = AddPostForm()
     return render(request, 'abouttrip/addpage.html',

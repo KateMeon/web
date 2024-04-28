@@ -5,6 +5,10 @@ from django.core.validators import MinLengthValidator, MaxLengthValidator
 
 
 # Create your models here.
+class UploadFiles(models.Model):
+    file = models.FileField(upload_to='uploads_model')
+
+
 class PublishedModel(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(is_published=Trips.Status.PUBLISHED)
@@ -91,4 +95,3 @@ class Voucher(models.Model):
 
     def __str__(self):
         return self.name
-
