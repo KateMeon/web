@@ -38,6 +38,9 @@ class Trips(models.Model):
                                                          (bool(x[0]), x[1]), Status.choices)),
                                        default=Status.DRAFT, verbose_name="Статус")
 
+    photo = models.ImageField(upload_to="photo/%Y/%m/%d/", default=None, blank=True, null=True,
+                              verbose_name="Фото")
+
     objects = models.Manager()
     published = PublishedModel()
 

@@ -1,4 +1,6 @@
 from django.contrib import admin, messages
+from django.utils.safestring import mark_safe
+
 from .models import Trips, Category
 
 
@@ -19,24 +21,26 @@ class VoucherFilter(admin.SimpleListFilter):
 
 @admin.register(Trips)
 class TripsAdmin(admin.ModelAdmin):
-    list_display = ('title', 'time_create', 'is_published', 'cat', 'brief_info', 'voucher_info')
+    list_display = ('title', 'post_photo', 'time_create', 'is_published', 'cat', 'voucher_info')
     list_display_links = ('title',)
     ordering = ['time_create', 'title']
     list_editable = ('is_published',)
     actions = ['set_published', 'set_draft']
     search_fields = ['title', 'cat__name']
     list_filter = [VoucherFilter, 'cat__name', 'is_published']
-    fields = ['title', 'slug', 'content', 'cat', 'voucher', 'tags']
-    # readonly_fields = ['slug']
+    fields = ['title', 'slug', 'content', 'post_photo', 'cat', 'voucher', 'tags']
+    readonly_fields = ['post_photo']
     prepopulated_fields = {"slug": ("title",)}
     # filter_horizontal = ['tags']
     filter_vertical = ['tags']
 
     # list_per_page = 5
 
-    @admin.display(description="Краткое описание")
-    def brief_info(self, trip: Trips):
-        return f"Описание {len(trip.content)} символов."
+    @admin.display(description="Изображение")
+    def post_photo(self, trip: Trips):
+        if trip.photo:
+            return mark_safe(f"<img src='{trip.photo.url}' width=50>")
+        return "Без фото"
 
     @admin.display(description="Ваучер")
     def voucher_info(self, trip: Trips):

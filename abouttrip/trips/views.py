@@ -15,13 +15,6 @@ menu = [{'title': "О сайте", 'url_name': 'about'},
         {'title': "Войти", 'url_name': 'login'}]
 
 
-# cats_db = [
-#     {'id': 1, 'name': 'По России'},
-#     {'id': 2, 'name': 'По миру'},
-#     {'id': 3, 'name': 'Путеводители'},
-# ]
-
-
 class MyClass:
     def __init__(self, a, b):
         self.a = a
@@ -36,18 +29,6 @@ def index(request):
             'cat_selected': 0,
             }
     return render(request, 'abouttrip/index.html', context=data)
-
-
-# def handle_uploaded_file(f):
-#     name = f.name
-#     ext = ''
-#     if '.' in name:
-#         ext = name[name.rindex('.'):]
-#         name = name[:name.rindex('.')]
-#     suffix = str(uuid.uuid4())
-#     with open(f"uploads/{name}_{suffix}{ext}", "wb+") as destination:
-#         for chunk in f.chunks():
-#             destination.write(chunk)
 
 
 def about(request):
@@ -76,10 +57,8 @@ def show_post(request, post_slug):
 
 def addpage(request):
     if request.method == "POST":
-        form = AddPostForm(request.POST)
+        form = AddPostForm(request.POST, request.FILES)
         if form.is_valid():
-            # print(form.cleaned_data)
-            # Trips.objects.create(**form.cleaned_data)
             form.save()
             return redirect('home')
     else:

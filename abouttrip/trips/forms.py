@@ -20,7 +20,7 @@ class AddPostForm(forms.ModelForm):
 
     class Meta:
         model = Trips
-        fields = ['title', 'slug', 'content', 'is_published', 'cat', 'voucher', 'tags']
+        fields = ['title', 'slug', 'content', 'photo', 'is_published', 'cat', 'voucher', 'tags']
         labels = {'slug': 'URL'}
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-input'}),
