@@ -13,6 +13,8 @@ from trips.models import Trips, Category, TagPost, UploadFiles
 from trips.forms import AddPostForm, UploadFileForm
 import uuid
 
+from trips.utils import DataMixin
+
 menu = [{'title': "О сайте", 'url_name': 'about'},
         {'title': "Добавить статью", 'url_name':
             'add_page'},
@@ -29,17 +31,18 @@ class MyClass:
 
 # Create your views here.
 
-class TripsHome(ListView):
+class TripsHome(DataMixin, ListView):
     model = Trips
     template_name = 'abouttrip/index.html'
     context_object_name = 'posts'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Главная страница'
-        context['menu'] = menu
-        context['cat_selected'] = int(self.request.GET.get('cat_id', 0))
-        return context
+    def get_context_data(self, *, object_list=None, **kwargs):
+        # context = super().get_context_data(**kwargs)
+        # context['title'] = 'Главная страница'
+        # context['menu'] = menu
+        # context['cat_selected'] = int(self.request.GET.get('cat_id', 0))
+        return self.get_mixin_context(super().get_context_data(**kwargs), title='Главная страница',
+                                      cat_selected=0, )
 
     def get_queryset(self):
         return Trips.published.all().select_related('cat')
@@ -57,26 +60,20 @@ def about(request):
                   {'title': 'О сайте', 'menu': menu, 'form': form})
 
 
-class AddPage(CreateView):
+class AddPage(DataMixin, CreateView):
     model = Trips
+    fields = '__all__'
     template_name = 'abouttrip/addpage.html'
     success_url = reverse_lazy('home')
-    extra_context = {
-        'menu': menu,
-        'title': 'Добавление статьи',
-    }
-    fields = '__all__'
+    title_page = 'Добавление статьи'
 
 
-class UpdatePage(UpdateView):
+class UpdatePage(DataMixin, UpdateView):
     model = Trips
     fields = ['title', 'content', 'photo', 'is_published', 'cat']
     template_name = 'abouttrip/addpage.html'
     success_url = reverse_lazy('home')
-    extra_context = {
-        'menu': menu,
-        'title': 'Редактирование статьи',
-    }
+    title_page = 'Редактирование статьи'
 
 
 class DeletePage(DeleteView):
@@ -102,20 +99,7 @@ def page_not_found(request, exception):
     return HttpResponse('<h1>Страница не найдена</h1>')
 
 
-# def show_category(request, cat_slug):
-#     category = get_object_or_404(Category, slug=cat_slug)
-#     posts = Trips.published.filter(cat_id=category.pk)
-#     data = {
-#         'title': f'Рубрика: {category.name}',
-#         'menu': menu,
-#         'posts': posts,
-#         'cat_selected': category.pk,
-#     }
-#     return render(request, 'abouttrip/index.html',
-#                   context=data)
-
-
-class TripsCategory(ListView):
+class TripsCategory(DataMixin, ListView):
     template_name = 'abouttrip/index.html'
     context_object_name = 'posts'
     allow_empty = False
@@ -126,25 +110,13 @@ class TripsCategory(ListView):
         context['title'] = 'Рубрика - ' + cat.name
         context['menu'] = menu
         context['cat_selected'] = cat.id
-        return context
+        return self.get_mixin_context(context, title='Рубрика- ' + cat.name, cat_selected=cat.id, )
 
     def get_queryset(self):
         return Trips.published.filter(cat__slug=self.kwargs['cat_slug']).select_related('cat')
 
 
-# def show_post(request, post_slug):
-#     post = get_object_or_404(Trips, slug=post_slug)
-#     data = {
-#         'title': post.title,
-#         'menu': menu,
-#         'post': post,
-#         'cat_selected': 1,
-#     }
-#     return render(request, 'abouttrip/post.html',
-#                   context=data)
-
-
-class ShowPost(DetailView):
+class ShowPost(DataMixin, DetailView):
     model = Trips
     template_name = 'abouttrip/post.html'
     slug_url_kwarg = 'post_slug'
@@ -152,15 +124,13 @@ class ShowPost(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = context['post']
-        context['menu'] = menu
-        return context
+        return self.get_mixin_context(context, title=context['post'])
 
     def get_object(self, queryset=None):
         return get_object_or_404(Trips.published, slug=self.kwargs[self.slug_url_kwarg])
 
 
-class TagPostList(ListView):
+class TagPostList(DataMixin, ListView):
     template_name = 'abouttrip/index.html'
     context_object_name = 'posts'
     allow_empty = False
@@ -169,10 +139,7 @@ class TagPostList(ListView):
         context = super().get_context_data(**kwargs)
 
         tag = TagPost.objects.get(slug=self.kwargs['tag_slug'])
-        context['title'] = 'Тег: ' + tag.tag
-        context['menu'] = menu
-        context['cat_selected'] = None
-        return context
+        return self.get_mixin_context(context, title='Тег: ' + tag.tag)
 
     def get_queryset(self):
         return Trips.published.filter(tags__slug=self.kwargs['tag_slug']).select_related('cat')
