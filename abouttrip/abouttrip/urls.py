@@ -35,7 +35,7 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('post/<slug:post_slug>/', views.show_post, name='post'),
     path('category/<int:cat_id>/', views.show_category, name='category'),
-    path('category/<slug:cat_slug>/', views.show_category, name='category'),
+    path('category/<slug:cat_slug>/', views.TripsCategory.as_view(), name='category'),
     path('tag/<slug:tag_slug>/', views.show_tag_postlist, name='tag'),
     path("__debug__/", include("debug_toolbar.urls")),
 ]
