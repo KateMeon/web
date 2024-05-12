@@ -37,6 +37,7 @@ urlpatterns = [
     # path('category/<int:cat_id>/', views.show_category, name='category'),
     path('category/<slug:cat_slug>/', views.TripsCategory.as_view(), name='category'),
     path('tag/<slug:tag_slug>/', views.TagPostList.as_view(), name='tag'),
+    path('edit/<slug:slug>/', views.UpdatePage.as_view(), name='edit_page'),
     path("__debug__/", include("debug_toolbar.urls")),
 ]
 

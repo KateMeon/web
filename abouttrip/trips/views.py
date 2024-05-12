@@ -5,7 +5,8 @@ from django.template.loader import render_to_string
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView, ListView, DetailView, FormView, CreateView
+from django.views.generic import TemplateView, ListView, DetailView, FormView, CreateView, \
+    UpdateView, DeleteView
 
 from trips.models import Trips, Category, TagPost, UploadFiles
 from trips.forms import AddPostForm, UploadFileForm
@@ -57,31 +58,35 @@ def about(request):
 
 class AddPage(CreateView):
     model = Trips
-    # form_class = AddPostForm
     template_name = 'abouttrip/addpage.html'
     success_url = reverse_lazy('home')
     extra_context = {
         'menu': menu,
         'title': 'Добавление статьи',
     }
+    fields = '__all__'
 
-    def get(self, request):
-        form = AddPostForm()
-        return render(request, 'abouttrip/addpage.html',
-                      {'menu': menu, 'title': 'Добавление статьи', 'form': form})
 
-    def post(self, request):
-        form = AddPostForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('home')
-        return render(request, 'abouttrip/addpage.html',
-                      {'menu': menu, 'title': 'Добавление статьи', 'form': form})
+class UpdatePage(UpdateView):
+    model = Trips
+    fields = ['title', 'content', 'photo', 'is_published', 'cat']
+    template_name = 'abouttrip/addpage.html'
+    success_url = reverse_lazy('home')
+    extra_context = {
+        'menu': menu,
+        'title': 'Редактирование статьи',
+    }
 
-    # def form_valid(self, form):
-    #     form.save()
-    #     return super().form_valid(form)
 
+class DeletePage(DeleteView):
+    model = Trips
+    fields = ['title', 'content', 'photo', 'is_published', 'cat']
+    template_name = 'abouttrip/addpage.html'
+    success_url = reverse_lazy('home')
+    extra_context = {
+        'menu': menu,
+        'title': 'Удаление статьи',
+    }
 
 def contact(request):
     return HttpResponse("Обратная связь")
