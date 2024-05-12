@@ -1,3 +1,5 @@
+from django.core.paginator import Paginator
+
 menu = [{'title': "О сайте", 'url_name': 'about'},
         {'title': "Добавить статью", 'url_name':
             'add_page'},
@@ -9,6 +11,7 @@ menu = [{'title': "О сайте", 'url_name': 'about'},
 class DataMixin:
     title_page = None
     extra_context = {}
+    paginate_by = 3
 
     def __init__(self):
         if self.title_page:

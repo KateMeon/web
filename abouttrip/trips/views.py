@@ -1,17 +1,13 @@
-from django.core.checks import messages
-from django.shortcuts import render
+from django.core.paginator import Paginator
 from django.http import HttpResponse, Http404, HttpResponseNotFound
 from django.shortcuts import redirect, get_object_or_404
-from django.template.loader import render_to_string
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView, FormView, CreateView, \
     UpdateView, DeleteView
 
 from trips.models import Trips, Category, TagPost, UploadFiles
 from trips.forms import AddPostForm, UploadFileForm
-import uuid
 
 from trips.utils import DataMixin
 
@@ -37,10 +33,6 @@ class TripsHome(DataMixin, ListView):
     context_object_name = 'posts'
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        # context = super().get_context_data(**kwargs)
-        # context['title'] = 'Главная страница'
-        # context['menu'] = menu
-        # context['cat_selected'] = int(self.request.GET.get('cat_id', 0))
         return self.get_mixin_context(super().get_context_data(**kwargs), title='Главная страница',
                                       cat_selected=0, )
 
@@ -49,15 +41,13 @@ class TripsHome(DataMixin, ListView):
 
 
 def about(request):
-    if request.method == "POST":
-        form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            fp = UploadFiles(file=form.cleaned_data['file'])
-            fp.save()
-    else:
-        form = UploadFileForm()
+    contact_list = Trips.published.all()
+    paginator = Paginator(contact_list, 3)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     return render(request, 'abouttrip/about.html',
-                  {'title': 'О сайте', 'menu': menu, 'form': form})
+                  {'page_obj': page_obj, 'title': 'О сайте'})
 
 
 class AddPage(DataMixin, CreateView):
@@ -103,6 +93,7 @@ class TripsCategory(DataMixin, ListView):
     template_name = 'abouttrip/index.html'
     context_object_name = 'posts'
     allow_empty = False
+
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)

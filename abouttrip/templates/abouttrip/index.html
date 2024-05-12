@@ -9,7 +9,7 @@
             <p class="last">Дата: {{p.time_update|date:"dm-Y H:i:s"}}</p>
         </div>
         {% if p.photo %}
-         <p ><img class="img-article-left thumb" src="{{p.photo.url}}"></p>
+        <p><img class="img-article-left thumb" src="{{p.photo.url}}"></p>
         {% endif %}
 
         <h2>{{ p.title }}</h2>
@@ -22,4 +22,21 @@
     </li>
     {% endfor %}
 </ul>
+{% if page_obj.has_other_pages %}
+<nav class="lang-list">
+        <ul class="lang-list">
+            {% for p in paginator.page_range %}
+            {% if page_obj.number == p %}
+                <li class="page-num page-num-selected">{{ p }}</li>
+            {% else %}
+                <li class="page-num">
+                    <a href="?page={{ p }}">{{ p }}</a>
+                </li>
+            {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+{% endif %}
 {% endblock %}
+
+
