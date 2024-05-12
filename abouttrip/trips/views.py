@@ -3,8 +3,9 @@ from django.http import HttpResponse, Http404, HttpResponseNotFound
 from django.shortcuts import redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView, ListView, DetailView
+from django.views.generic import TemplateView, ListView, DetailView, FormView, CreateView
 
 from trips.models import Trips, Category, TagPost, UploadFiles
 from trips.forms import AddPostForm, UploadFileForm
@@ -54,7 +55,16 @@ def about(request):
                   {'title': 'О сайте', 'menu': menu, 'form': form})
 
 
-class AddPage(View):
+class AddPage(CreateView):
+    model = Trips
+    # form_class = AddPostForm
+    template_name = 'abouttrip/addpage.html'
+    success_url = reverse_lazy('home')
+    extra_context = {
+        'menu': menu,
+        'title': 'Добавление статьи',
+    }
+
     def get(self, request):
         form = AddPostForm()
         return render(request, 'abouttrip/addpage.html',
@@ -67,6 +77,10 @@ class AddPage(View):
             return redirect('home')
         return render(request, 'abouttrip/addpage.html',
                       {'menu': menu, 'title': 'Добавление статьи', 'form': form})
+
+    # def form_valid(self, form):
+    #     form.save()
+    #     return super().form_valid(form)
 
 
 def contact(request):
