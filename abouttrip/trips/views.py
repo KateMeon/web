@@ -4,7 +4,7 @@ from django.shortcuts import redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.shortcuts import render
 from django.views import View
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView, ListView, DetailView
 
 from trips.models import Trips, Category, TagPost, UploadFiles
 from trips.forms import AddPostForm, UploadFileForm
@@ -81,17 +81,17 @@ def page_not_found(request, exception):
     return HttpResponse('<h1>Страница не найдена</h1>')
 
 
-def show_category(request, cat_slug):
-    category = get_object_or_404(Category, slug=cat_slug)
-    posts = Trips.published.filter(cat_id=category.pk)
-    data = {
-        'title': f'Рубрика: {category.name}',
-        'menu': menu,
-        'posts': posts,
-        'cat_selected': category.pk,
-    }
-    return render(request, 'abouttrip/index.html',
-                  context=data)
+# def show_category(request, cat_slug):
+#     category = get_object_or_404(Category, slug=cat_slug)
+#     posts = Trips.published.filter(cat_id=category.pk)
+#     data = {
+#         'title': f'Рубрика: {category.name}',
+#         'menu': menu,
+#         'posts': posts,
+#         'cat_selected': category.pk,
+#     }
+#     return render(request, 'abouttrip/index.html',
+#                   context=data)
 
 
 class TripsCategory(ListView):
@@ -111,25 +111,47 @@ class TripsCategory(ListView):
         return Trips.published.filter(cat__slug=self.kwargs['cat_slug']).select_related('cat')
 
 
-def show_post(request, post_slug):
-    post = get_object_or_404(Trips, slug=post_slug)
-    data = {
-        'title': post.title,
-        'menu': menu,
-        'post': post,
-        'cat_selected': 1,
-    }
-    return render(request, 'abouttrip/post.html',
-                  context=data)
+# def show_post(request, post_slug):
+#     post = get_object_or_404(Trips, slug=post_slug)
+#     data = {
+#         'title': post.title,
+#         'menu': menu,
+#         'post': post,
+#         'cat_selected': 1,
+#     }
+#     return render(request, 'abouttrip/post.html',
+#                   context=data)
 
 
-def show_tag_postlist(request, tag_slug):
-    tag = get_object_or_404(TagPost, slug=tag_slug)
-    posts = tag.tags.filter(is_published=Trips.Status.PUBLISHED)
-    data = {
-        'title': f'Тег: {tag.tag}',
-        'menu': menu,
-        'posts': posts,
-        'cat_selected': None,
-    }
-    return render(request, 'abouttrip/index.html', context=data)
+class ShowPost(DetailView):
+    model = Trips
+    template_name = 'abouttrip/post.html'
+    slug_url_kwarg = 'post_slug'
+    context_object_name = 'post'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = context['post']
+        context['menu'] = menu
+        return context
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Trips.published, slug=self.kwargs[self.slug_url_kwarg])
+
+
+class TagPostList(ListView):
+    template_name = 'abouttrip/index.html'
+    context_object_name = 'posts'
+    allow_empty = False
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        tag = TagPost.objects.get(slug=self.kwargs['tag_slug'])
+        context['title'] = 'Тег: ' + tag.tag
+        context['menu'] = menu
+        context['cat_selected'] = None
+        return context
+
+    def get_queryset(self):
+        return Trips.published.filter(tags__slug=self.kwargs['tag_slug']).select_related('cat')
