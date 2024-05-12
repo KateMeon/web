@@ -1,3 +1,4 @@
+from django.core.checks import messages
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseNotFound
 from django.shortcuts import redirect, get_object_or_404
@@ -80,13 +81,14 @@ class UpdatePage(UpdateView):
 
 class DeletePage(DeleteView):
     model = Trips
-    fields = ['title', 'content', 'photo', 'is_published', 'cat']
     template_name = 'abouttrip/addpage.html'
     success_url = reverse_lazy('home')
-    extra_context = {
-        'menu': menu,
-        'title': 'Удаление статьи',
-    }
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Удаление статьи: \'{self.object.title}\''
+        return context
+
 
 def contact(request):
     return HttpResponse("Обратная связь")
