@@ -3,6 +3,9 @@ from django.http import HttpResponse, Http404, HttpResponseNotFound
 from django.shortcuts import redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.shortcuts import render
+from django.views import View
+from django.views.generic import TemplateView
+
 from trips.models import Trips, Category, TagPost, UploadFiles
 from trips.forms import AddPostForm, UploadFileForm
 import uuid
@@ -23,12 +26,24 @@ class MyClass:
 
 # Create your views here.
 def index(request):
-    data = {'title': 'Главная страница',
-            'menu': menu,
-            'posts': Trips.published.all(),
-            'cat_selected': 0,
-            }
     return render(request, 'abouttrip/index.html', context=data)
+
+
+class TripsHome(TemplateView):
+    template_name = 'abouttrip/index.html'
+    # extra_context = {'title': 'Главная страница',
+    #                  'menu': menu,
+    #                  'posts': Trips.published.all().select_related('cat'),
+    #                  'cat_selected': 0,
+    #                  }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Главная страница'
+        context['menu'] = menu
+        context['posts'] = Trips.published.all().select_related('cat')
+        context['cat_selected'] = int(self.request.GET.get('cat_id', 0))
+        return context
 
 
 def about(request):
@@ -55,16 +70,19 @@ def show_post(request, post_slug):
                   context=data)
 
 
-def addpage(request):
-    if request.method == "POST":
+class AddPage(View):
+    def get(self, request):
+        form = AddPostForm()
+        return render(request, 'abouttrip/addpage.html',
+                      {'menu': menu, 'title': 'Добавление статьи', 'form': form})
+
+    def post(self, request):
         form = AddPostForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('home')
-    else:
-        form = AddPostForm()
-    return render(request, 'abouttrip/addpage.html',
-                  {'menu': menu, 'title': 'Добавление статьи', 'form': form})
+        return render(request, 'abouttrip/addpage.html',
+                      {'menu': menu, 'title': 'Добавление статьи', 'form': form})
 
 
 def contact(request):
