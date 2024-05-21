@@ -3,6 +3,8 @@ import trips.views as views
 from trips.models import Category, TagPost
 from django.db.models import Count
 
+from trips.utils import menu
+
 register = template.Library()
 
 
@@ -23,3 +25,8 @@ def show_categories(cat_selected_id=0):
 @register.inclusion_tag('abouttrip/list_tags.html')
 def show_all_tags():
     return {"tags": TagPost.objects.annotate(total=Count("tags")).filter(total__gt=0)}
+
+
+# @register.simple_tag
+# def get_menu():
+#     return menu

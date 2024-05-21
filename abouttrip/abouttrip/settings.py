@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'trips.apps.TripsConfig',
     'django_extensions',
+    'users.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [
@@ -65,6 +66,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'users.context_processors.get_trips_context'
             ],
         },
     },
@@ -128,3 +130,5 @@ MEDIA_URL = '/media/'
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+LOGIN_REDIRECT_URL = 'home'

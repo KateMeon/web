@@ -38,7 +38,10 @@ urlpatterns = [
     path('category/<slug:cat_slug>/', views.TripsCategory.as_view(), name='category'),
     path('tag/<slug:tag_slug>/', views.TagPostList.as_view(), name='tag'),
     path('edit/<slug:slug>/', views.UpdatePage.as_view(), name='edit_page'),
+    path('delete/<slug:slug>/', views.DeletePage.as_view(), name='delete_page'),
     path("__debug__/", include("debug_toolbar.urls")),
+    path('users/', include("users.urls", namespace="users")),
+
 ]
 
 if settings.DEBUG:
