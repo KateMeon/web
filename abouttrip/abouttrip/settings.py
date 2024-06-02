@@ -133,3 +133,4 @@ INTERNAL_IPS = [
 
 LOGOUT_REDIRECT_URL = 'home'
 LOGIN_REDIRECT_URL = 'home'
+LOGIN_URL = 'users:login'

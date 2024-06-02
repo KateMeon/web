@@ -1,3 +1,5 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.http import HttpResponse, Http404, HttpResponseNotFound
 from django.shortcuts import redirect, get_object_or_404
@@ -40,6 +42,7 @@ class TripsHome(DataMixin, ListView):
         return Trips.published.all().select_related('cat')
 
 
+@login_required
 def about(request):
     contact_list = Trips.published.all()
     paginator = Paginator(contact_list, 3)
@@ -50,12 +53,18 @@ def about(request):
                   {'page_obj': page_obj, 'title': 'О сайте'})
 
 
-class AddPage(DataMixin, CreateView):
+class AddPage(LoginRequiredMixin, DataMixin, CreateView):
     model = Trips
     fields = '__all__'
     template_name = 'abouttrip/addpage.html'
     success_url = reverse_lazy('home')
     title_page = 'Добавление статьи'
+    login_url = '/admin/'
+    
+    def form_valid(self, form):
+        t = form.save(commit=False)
+        t.author = self.request.user
+        return super().form_valid(form)
 
 
 class UpdatePage(DataMixin, UpdateView):
@@ -133,4 +142,3 @@ class TagPostList(DataMixin, ListView):
 
     def get_queryset(self):
         return Trips.published.filter(tags__slug=self.kwargs['tag_slug']).select_related('cat')
-

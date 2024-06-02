@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
@@ -50,6 +51,9 @@ class Trips(models.Model):
 
     voucher = models.OneToOneField('Voucher', on_delete=models.SET_NULL, null=True, blank=True,
                                    related_name='trip', verbose_name="Ваучер")
+
+    author = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, related_name='posts',
+                               null=True, default=None)
 
     def get_absolute_url(self):
         return reverse('post', kwargs={'post_slug': self.slug})
