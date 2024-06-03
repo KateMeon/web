@@ -1,4 +1,4 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.http import HttpResponse, Http404, HttpResponseNotFound
@@ -60,7 +60,8 @@ class AddPage(LoginRequiredMixin, DataMixin, CreateView):
     success_url = reverse_lazy('home')
     title_page = 'Добавление статьи'
     login_url = '/admin/'
-    
+    permission_required = 'trips.add_trips'
+
     def form_valid(self, form):
         t = form.save(commit=False)
         t.author = self.request.user
@@ -73,6 +74,7 @@ class UpdatePage(DataMixin, UpdateView):
     template_name = 'abouttrip/addpage.html'
     success_url = reverse_lazy('home')
     title_page = 'Редактирование статьи'
+    permission_required = 'trips.change_trips'
 
 
 class DeletePage(DeleteView):
@@ -86,6 +88,7 @@ class DeletePage(DeleteView):
         return context
 
 
+@permission_required(perm='trips.view_trips', raise_exception=True)
 def contact(request):
     return HttpResponse("Обратная связь")
 
