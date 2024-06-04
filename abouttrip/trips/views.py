@@ -88,9 +88,11 @@ class DeletePage(DeleteView):
         return context
 
 
-@permission_required(perm='trips.view_trips', raise_exception=True)
+# @permission_required(perm='trips.view_trips', raise_exception=True)
 def contact(request):
-    return HttpResponse("Обратная связь")
+    return render(request, 'abouttrip/contact.html', {'title': 'Обратная связь'})
+
+    # return HttpResponse("Обратная связь")
 
 
 def login(request):
